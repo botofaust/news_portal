@@ -1,0 +1,56 @@
+from news.models import Author, Category, Post, Comment
+from django.contrib.auth.models import User
+
+user1 = User.objects.create_user('First_user')
+user2 = User.objects.create_user('Second_user')
+author1 = Author.objects.create(user=user1)
+author2 = Author.objects.create(user=user2)
+cat1 = Category.objects.create(name='Politic')
+cat2 = Category.objects.create(name='Education')
+cat3 = Category.objects.create(name='Nature')
+cat4 = Category.objects.create(name='Insect')
+post1 = Post.objects.create(author=author1, post_type=Post.post_news, caption='News one', text='Many symbols')
+post2 = Post.objects.create(author=author1, post_type=Post.post_article, caption='Article one', text='Many symbols')
+post3 = Post.objects.create(author=author2, post_type=Post.post_article, caption='Article two', text='Many symbols')
+cat1.post_set.add(post1)
+cat2.post_set.add(post1)
+cat2.post_set.add(post2)
+cat3.post_set.add(post3)
+cat4.post_set.add(post3)
+comment1 = Comment.objects.create(post=post1, user=user1, text='Comment 1')
+comment2 = Comment.objects.create(post=post2, user=user2, text='Comment 2')
+comment3 = Comment.objects.create(post=post3, user=user1, text='Comment 3')
+comment4 = Comment.objects.create(post=post3, user=user2, text='Comment 4')
+post1.like()
+post1.like()
+post2.dislike()
+post3.like()
+post3.dislike()
+comment1.like()
+comment2.dislike()
+comment3.like()
+comment4.dislike()
+
+for a in Author.objects.all():
+    Author.update_rating(a)
+
+a = Author.objects.all().order_by('-rating')[0]
+print(a.user.username, 'has rating', a.rating)
+
+p = Post.objects.all().order_by('-rating')[0]
+print(f'Create data: {p.create_datetime}\n' \
+    f'Author: {p.author.user.username}\n' \
+    f'Rating: {p.rating}\n' \
+    f'Caption: {p.caption}\n' \
+    f'Preview: {p.preview()}')
+
+comments = Comment.objects.filter(post=p)
+if comments.count() == 0:
+    print('no comments')
+else:
+    for c in enumerate(comments.values('create_datetime', 'user__username', 'rating', 'text')):
+        print('Comment', c[0] + 1)
+        print(f'Create data: {c[1]["create_datetime"]}\n' \
+            f'Author: {c[1]["user__username"]}\n' \
+            f'Rating: {c[1]["rating"]}\n' \
+            f'Text: {c[1]["text"]}')
