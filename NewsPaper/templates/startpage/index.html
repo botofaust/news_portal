@@ -1,0 +1,16 @@
+{% extends "flatpages/default.html" %}
+
+{% block content %}
+<h2>Страница авторизованного пользователя <a href="/accounts/{{ request.user.pk }}/update">{{request.user.username}}</a></h2>
+<div align="left"> Здесь может содержаться персональная информация для каждого пользователя </div>
+<br>
+<div align="left">
+    {% if is_author %}
+        Пользователь является автором и может добавлять и изменять публикации.
+    {% else %}
+        <button> <a href="/accounts/make_author">Стать автором</a> </button>
+    {% endif %}
+    <br>
+    <button> <a href="/auth/logout/">Выйти</a> </button>
+</div>
+{% endblock %}

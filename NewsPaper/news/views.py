@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, UpdateView, CreateView, DeleteView
 from .models import Post
@@ -8,7 +9,7 @@ from .filters import PostFilter
 class PostsList(ListView):
     model = Post
     ordering = '-create_datetime'
-    template_name = 'posts.html'
+    template_name = 'news/posts.html'
     context_object_name = 'posts'
     paginate_by = 10
 
@@ -16,7 +17,7 @@ class PostsList(ListView):
 class PostSearchList(ListView):
     model = Post
     ordering = '-create_datetime'
-    template_name = 'post_search.html'
+    template_name = 'news/post_search.html'
     context_object_name = 'post_search'
     paginate_by = 10
 
@@ -33,13 +34,14 @@ class PostSearchList(ListView):
 
 class PostDetail(DetailView):
     model = Post
-    template_name = 'post.html'
+    template_name = 'news/post.html'
     context_object_name = 'post'
 
 
-class PostCreate(CreateView):
+class PostCreate(PermissionRequiredMixin, CreateView):
+    permission_required = ('news.create_post', )
     model = Post
-    template_name = 'post_edit.html'
+    template_name = 'news/post_edit.html'
     form_class = PostForm
 
     def form_valid(self, form):
@@ -52,14 +54,16 @@ class PostCreate(CreateView):
         return super().form_valid(form)
 
 
-class PostEdit(UpdateView):
+class PostEdit(PermissionRequiredMixin, UpdateView):
+    permission_required = ('news.change_post', )
     model = Post
-    template_name = 'post_edit.html'
+    template_name = 'news/post_edit.html'
     form_class = PostForm
 
 
-class PostDelete(DeleteView):
+class PostDelete(PermissionRequiredMixin, DeleteView):
+    permission_required = ('news.delete_post', )
     model = Post
-    template_name = 'post_delete.html'
+    template_name = 'news/post_delete.html'
     context_object_name = 'post'
     success_url = reverse_lazy('posts')
