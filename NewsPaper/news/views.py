@@ -1,9 +1,16 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, UpdateView, CreateView, DeleteView
-from .models import Post
+from .models import Post, Category
 from .forms import PostForm
 from .filters import PostFilter
+
+
+@receiver(post_save, sender=Post)
+def notify_managers_appointment(sender, instance, created, **kwargs):
+    instance.send_email_to_subs()
 
 
 class PostsList(ListView):
@@ -36,6 +43,26 @@ class PostDetail(DetailView):
     model = Post
     template_name = 'news/post.html'
     context_object_name = 'post'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cur_user = self.request.user.pk
+        if cur_user is not None:
+            is_subscriber = len(Category.objects.filter(subscribers=cur_user)) != 0
+        else:
+            is_subscriber = False
+        context['is_subscriber'] = is_subscriber
+        context['is_user'] = cur_user is not None
+        return context
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        context = super(PostDetail, self).get_context_data(**kwargs)
+        if 'subscribe' in request.POST:
+            context['post'].subscribe(request.user)
+        if 'unsubscribe' in request.POST:
+            context['post'].unsubscribe(request.user)
+        return self.render_to_response(context=context)
 
 
 class PostCreate(PermissionRequiredMixin, CreateView):

@@ -9,4 +9,15 @@
 <h1>{{ post.caption|censor }}</h1>
 <p align="justify">{{ post.text|censor }}</p>
 <p align="right">{{ post.create_datetime|date:"d.m.Y" }}</p>
+
+{% if is_user %}
+    <form action="" method="POST">
+    {% csrf_token %}
+    {% if is_subscriber %}
+        <button type="submit" name="unsubscribe">Отписаться</button>
+    {% else %}
+        <button type="submit" name="subscribe">Подписаться</button>
+    {% endif %}
+    </form>
+{% endif %}
 {% endblock content %}

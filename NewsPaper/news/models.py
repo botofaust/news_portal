@@ -1,7 +1,12 @@
+import datetime
+
 from django.contrib.auth.models import User
+from django.core.mail import EmailMultiAlternatives
 from django.db import models
 from django.db.models import Sum
+from django.template.loader import render_to_string
 from django.urls import reverse
+from django.utils import timezone
 
 
 class Author(models.Model):
@@ -21,9 +26,16 @@ class Author(models.Model):
 
 class Category(models.Model):
     name = models.CharField(max_length=255, unique=True)
+    subscribers = models.ManyToManyField(User)
 
     def __str__(self):
         return self.name
+
+    def subscribe(self, user):
+        self.subscribers.add(user)
+
+    def unsubscribe(self, user):
+        self.subscribers.remove(user)
 
 
 class Post(models.Model):
@@ -57,6 +69,41 @@ class Post(models.Model):
 
     def get_absolute_url(self):
         return reverse('post', args=[str(self.id)])
+
+    def subscribe(self, user):
+        for category in self.categories.all():
+            category.subscribe(user)
+
+    def unsubscribe(self, user):
+        for category in self.categories.all():
+            category.unsubscribe(user)
+
+    def send_email_to_subs(self):
+        for category in self.categories.all():
+            for user in category.subscribers.all():
+                html_content = render_to_string(
+                    'news/post_email.html',
+                    {
+                        'post': self,
+                        'user': user,
+                    }
+                )
+                msg = EmailMultiAlternatives(
+                    subject=f'{self.caption}',
+                    body=self.preview(),
+                    from_email='faust_max@mail.ru',
+                    to=[user.email],
+                )
+                msg.attach_alternative(html_content, "text/html")
+
+                msg.send()
+
+    @staticmethod
+    def mailing():
+        date = timezone.now() - datetime.timedelta(days=7)
+        posts = Post.objects.filter(create_datetime__gte=date)
+        for post in posts:
+            post.send_email_to_subs()
 
 
 class PostCategory(models.Model):

@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Новая публикация</title>
+</head>
+<body>
+    <h2>{{ user.username }}, вы подписаны на рассылку. Создана новая публикация.</h2>
+    <br>
+    <p>  {{ post.text|truncatechars:50 }} </p>
+    <p align="right"> {{ post.create_datetime|date:"d-M-Y" }}</p>
+    <p> <a href="http://127.0.0.1:8000{% url 'post' pk=post.pk %}">Посмотреть на сайте</a></p>
+</body>
+</html>
