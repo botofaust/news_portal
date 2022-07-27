@@ -6,11 +6,13 @@ from django.views.generic import ListView, DetailView, UpdateView, CreateView, D
 from .models import Post, Category
 from .forms import PostForm
 from .filters import PostFilter
+from .tasks import post_send
 
 
 @receiver(post_save, sender=Post)
-def notify_managers_appointment(sender, instance, created, **kwargs):
-    instance.send_email_to_subs()
+def notify_subscribers(sender, instance, created, **kwargs):
+    if created:
+        post_send.delay(instance.pk)
 
 
 class PostsList(ListView):
