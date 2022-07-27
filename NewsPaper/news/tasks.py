@@ -4,7 +4,6 @@ from .models import Post
 
 @shared_task
 def weekly_mailing():
-    print(111)
     Post.mailing()
 
 

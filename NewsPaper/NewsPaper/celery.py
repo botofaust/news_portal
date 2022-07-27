@@ -9,7 +9,7 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.conf.beat_schedule = {
     'mailing_every_monday_8am': {
         'task': 'news.tasks.weekly_mailing',
-        'schedule': crontab(hour=22, minute=32, day_of_week='wednesday'),
+        'schedule': crontab(minute=0, hour=8, day_of_week=1),
     },
 }
 app.autodiscover_tasks()
