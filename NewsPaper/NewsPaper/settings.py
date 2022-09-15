@@ -1,3 +1,4 @@
+import logging
 from os.path import join, dirname
 from pathlib import Path
 import os
@@ -133,6 +134,10 @@ ABSOLUTE_URL_OVERRIDES = {
     'auth.user': lambda o: '/',
 }
 
+ADMINS = (
+    ('admin', 'faust_max@mail.ru'),
+)
+
 EMAIL_HOST = os.environ.get('EMAIL_HOST')
 EMAIL_PORT = os.environ.get('EMAIL_PORT')
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
@@ -147,3 +152,136 @@ CELERY_RESULT_BACKEND = 'redis://localhost:6379'
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
+
+# ИТОГОВОЕ ЗАДАНИЕ HW13.4
+#
+# 1. Создаем форматные строки для разных уровней логов
+# 2. Создаем фильтры для определения константы DEBUG и для сортировки сообщений по уровням логгера
+# 3. Создаем хандлеры для выводов в консоль, в файлы и отсылки на почту
+# 4. Подключаем хандлеры к нужным логгерам Django
+#
+# Для дублирования всех сообщений дочерних логгеров Django в консоль и файл general.log ставим propagate в True
+# (кроме django.security для пущей секретности)
+#
+# Чтобы разные хандлеры вывода в консоль не дублировали друг друга, у каждого из них стоит фильтр, определяющий уровень
+# сообщения, реализован классом NewsPaper.logger.LevelFilter.
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'debug': {
+            'format': '{asctime} {levelname}: {message}',
+            'style': '{'
+        },
+        'warnings': {
+            'format': '{asctime} {levelname} in {pathname}: {message}',
+            'style': '{'
+        },
+        'errors': {
+            'format': '{asctime} {levelname} in {pathname}: {message} \n \t Traceback: \n {exc_info}',
+            'style': '{'
+        },
+        'general': {
+            'format': '{asctime} {levelname} in module "{module}": {message}',
+            'style': '{'
+        },
+    },
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse',
+        },
+        'debug_filter': {
+            '()': 'NewsPaper.logger.LevelFilter',
+            'levelno': logging.DEBUG
+        },
+        'info_filter': {
+            '()': 'NewsPaper.logger.LevelFilter',
+            'levelno': logging.INFO
+        },
+        'warning_filter': {
+            '()': 'NewsPaper.logger.LevelFilter',
+            'levelno': logging.WARNING
+        },
+    },
+    'handlers': {
+        'console_debug': {
+            'level': 'DEBUG',
+            'filters': ['require_debug_true', 'debug_filter'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'debug'
+        },
+        'console_info': {
+            'level': 'INFO',
+            'filters': ['require_debug_true', 'info_filter'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'debug'
+        },
+        'console_warnings': {
+            'level': 'WARNING',
+            'filters': ['require_debug_true', 'warning_filter'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'warnings'
+        },
+        'console_errors': {
+            'level': 'ERROR',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler',
+            'formatter': 'errors'
+        },
+        'file_general': {
+            'level': 'INFO',
+            'filters': ['require_debug_false'],
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'general.log'),
+            'formatter': 'general'
+        },
+        'file_errors': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'errors.log'),
+            'formatter': 'errors'
+        },
+        'file_security': {
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs', 'security.log'),
+            'formatter': 'general'
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'filters': ['require_debug_false'],
+            'class': 'django.utils.log.AdminEmailHandler',
+            'formatter': 'warnings'
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['console_debug', 'console_info', 'console_warnings', 'console_errors', 'file_general'],
+            'propagate': True,
+        },
+        'django.request': {
+            'handlers': ['file_errors', 'mail_admins'],
+            'propagate': True,
+        },
+        'django.server': {
+            'handlers': ['file_errors', 'mail_admins'],
+            'propagate': True,
+        },
+        'django.template': {
+            'handlers': ['file_errors'],
+            'propagate': True,
+        },
+        'django.db.backends': {
+            'handlers': ['file_errors'],
+            'propagate': True,
+        },
+        'django.security': {
+            'handlers': ['file_security'],
+            'propagate': False,
+        },
+    }
+}

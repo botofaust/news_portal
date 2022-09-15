@@ -1,0 +1,24 @@
+2022-09-15 21:45:20,935 INFO in module "autoreload": Watching for file changes with StatReloader
+2022-09-15 21:49:04,554 INFO in module "autoreload": C:\Users\Faust\PycharmProjects\news_portal\NewsPaper\NewsPaper\settings.py changed, reloading.
+2022-09-15 21:49:05,421 INFO in module "autoreload": Watching for file changes with StatReloader
+2022-09-15 21:50:04,434 INFO in module "autoreload": C:\Users\Faust\PycharmProjects\news_portal\NewsPaper\NewsPaper\settings.py changed, reloading.
+2022-09-15 21:50:05,352 INFO in module "autoreload": Watching for file changes with StatReloader
+2022-09-15 21:50:13,296 INFO in module "autoreload": Watching for file changes with StatReloader
+2022-09-15 21:52:24,546 INFO in module "autoreload": Watching for file changes with StatReloader
+2022-09-15 21:52:50,077 INFO in module "autoreload": C:\Users\Faust\PycharmProjects\news_portal\NewsPaper\NewsPaper\settings.py changed, reloading.
+2022-09-15 21:52:50,936 INFO in module "autoreload": Watching for file changes with StatReloader
+2022-09-15 21:54:54,318 INFO in module "autoreload": Watching for file changes with StatReloader
+2022-09-15 21:55:04,487 INFO in module "basehttp": "GET /auth/login/?next=/news/create_post%3Ftype%3DAT HTTP/1.1" 200 3991
+2022-09-15 21:58:13,321 INFO in module "basehttp": "GET /news/create_post?type=AT HTTP/1.1" 302 0
+2022-09-15 21:58:13,353 INFO in module "basehttp": "GET /auth/login/?next=/news/create_post%3Ftype%3DAT HTTP/1.1" 200 3991
+2022-09-15 22:14:20,454 INFO in module "autoreload": C:\Users\Faust\PycharmProjects\news_portal\NewsPaper\NewsPaper\settings.py changed, reloading.
+2022-09-15 22:14:21,330 INFO in module "autoreload": Watching for file changes with StatReloader
+2022-09-15 22:21:01,132 INFO in module "autoreload": C:\Users\Faust\PycharmProjects\news_portal\NewsPaper\NewsPaper\settings.py changed, reloading.
+2022-09-15 22:21:01,980 INFO in module "autoreload": Watching for file changes with StatReloader
+2022-09-15 22:31:29,922 INFO in module "autoreload": Watching for file changes with StatReloader
+2022-09-15 22:52:18,489 INFO in module "autoreload": Watching for file changes with StatReloader
+2022-09-15 22:52:22,256 INFO in module "basehttp": "GET /auth/login/?next=/news/create_post%3Ftype%3DAT HTTP/1.1" 200 3991
+2022-09-15 22:53:31,248 INFO in module "autoreload": C:\Users\Faust\PycharmProjects\news_portal\NewsPaper\NewsPaper\settings.py changed, reloading.
+2022-09-15 23:28:03,486 INFO in module "autoreload": Watching for file changes with StatReloader
+2022-09-15 23:28:05,358 INFO in module "basehttp": "GET /auth/login/?next=/news/create_post%3Ftype%3DAT HTTP/1.1" 200 3991
+2022-09-15 23:31:13,741 INFO in module "autoreload": C:\Users\Faust\PycharmProjects\news_portal\NewsPaper\NewsPaper\settings.py changed, reloading.
